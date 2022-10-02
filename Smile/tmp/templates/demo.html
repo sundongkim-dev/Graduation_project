@@ -1,0 +1,84 @@
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- Bootstrap CSS -->
+    <link href="./css/bootstrap.min.css" rel="stylesheet">
+    <title>Hate Speech Detection</title>
+</head>
+
+<body>
+    <div class="navbar navbar-expand-md fixed-top navbar-dark bg-primary p-1">
+        <div class="container">
+            <a href="./index.html" class="navbar-brand">혐오표현탐지</a>
+            <div class="collapse navbar-collapse" id="navbarResponsive">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link" href="./basic.html">모델지표</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./expert.html">테스트모델</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="./measure.html">사이트통계</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div class="container text-center p-5">
+        <div class="px-4 py-5 mt-4">
+            <h1 class="display-6 fw-bold mb-4">테스트모델</h1>
+            <div class="col mx-auto">
+                <p class="lead mb-5">혐오표현인지 아닌지 확인해보세요</p>
+            </div>
+            <div class="form-floating mb-5" style="max-width: 800px; float:none; margin:0 auto">
+                <input type="text" class="form-control" id="floatingInput" placeholder="문자열">
+                <label for="floatingInput">테스트 문자열 입력</label>
+            </div>
+            <div class="float-right">
+                <button type="button" id="calcButton" class="btn btn-primary btn-lg">계산하기</button>
+            </div>
+        </div>
+        <div style="max-width: 1000px; float:none; margin:0 auto">
+            <div class="alert alert-danger" role="alert">결과는 혐오표현입니다. 신뢰도는 00%입니다.</div>
+            <table class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col"></th>
+                    <th scope="col">여성/가족</th>
+                    <th scope="col">남성</th>
+                    <th scope="col">성소수자</th>
+                    <th scope="col">인종/국적</th>
+                    <th scope="col">연령</th>
+                    <th scope="col">지역</th>
+                    <th scope="col">종교</th>
+                    <th scope="col">기타</th>
+                    <th scope="col">악플</th>
+                    <th scope="col">정상</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr class="table-light">
+                    <th scope="row">결과</th>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                    <td>0.00</td>
+                  </tr>
+                </tbody>
+              </table>
+              
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
