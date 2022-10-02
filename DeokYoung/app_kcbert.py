@@ -1,24 +1,23 @@
 from flask import Flask, jsonify, render_template, request, url_for
 
-from kobert.utils import get_tokenizer
-from kobert.pytorch_kobert import get_pytorch_kobert_model
-
 from MyModel import *
 
-from transformers import BertForSequenceClassification, AutoTokenizer, TextClassificationPipeline
-
-import gluonnlp as nlp
 import torch
 import numpy as np
 import time
 
 
-# load fine-tuned model
+# load kcbert model
 base_dir = os.getcwd()
-model_dir = '/model_output' # change as you want
+model_dir = '/model_output/kcbert-model.pth' # change as you want
 model_location = base_dir + model_dir
-model = BertForSequenceClassification.from_pretrained(model_location)
-tokenizer = AutoTokenizer.from_pretrained(model_location)
+model = torch.load(model_location)
+model.to('cpu')
+model.eval()
+
+# load kcbert tokenizer
+tokenizer = torch.hub.load('huggingface/pytorch-transformers', 'tokenizer', 'beomi/kcbert-base')
+
 
 app = Flask(__name__)
 
@@ -54,7 +53,6 @@ def testModel(model, seq):
     classes = np.array(['woman/family', 'man', 'minority', 'race/nationality', 'age', 'region', 'religion', 'extra', 'curse', 'clean'])
     # classes = np.array(["여성/가족","남성","성소수자","인종/국적","연령","지역","종교","기타 혐오","악플/욕설","clean"])
 
-    model.eval()
     inputs = tokenizer(seq, return_tensors='pt')
     outputs = model(**inputs)
     scores = torch.sigmoid(outputs['logits']).squeeze()
