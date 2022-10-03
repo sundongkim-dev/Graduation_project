@@ -7,16 +7,17 @@ import numpy as np
 import time
 
 
-# load kcbert model
 base_dir = os.getcwd()
-model_dir = '/model_output/kcbert-model.pth' # change as you want
-model_location = base_dir + model_dir
-model = torch.load(model_location)
+
+# load kcbert model
+model_path = base_dir + '/model_output/kcbert-model.pth'
+model = torch.load(model_path)
 model.to('cpu')
 model.eval()
 
 # load kcbert tokenizer
-tokenizer = torch.hub.load('huggingface/pytorch-transformers', 'tokenizer', 'beomi/kcbert-base')
+tokenizer_path = base_dir + '/model_output/kcbert-tokenizer.pth' 
+tokenizer = torch.load(tokenizer_path)
 
 
 app = Flask(__name__)
