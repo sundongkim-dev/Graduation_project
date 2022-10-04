@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request, url_for
 
-from MyModel import *
+#from MyModel import *
+import os
 
 import torch
 import numpy as np
@@ -24,19 +25,16 @@ app = Flask(__name__)
 
 @app.route('/')
 def index(string=None):
-    return render_template('submit.html', string=string)
+    return render_template('demo.html', string=string)
 
 
-@app.route('/predict', methods=['POST', 'GET'])
-def predict(string=None):
+@app.route('/predict/<sentence>', methods=['POST', 'GET'])
+def predict(sentence):
     if request.method == 'POST':
         pass
     elif request.method == 'GET':
-        temp = request.args.get('string')
-        testModel(model, temp)
-        return render_template('submit.html', string=temp)
-
-    #return jsonify({'class_id': 'IMAGE_NET_XXX', 'class_name': 'Cat'})
+        print(testModel(model, sentence))
+        return jsonify(testModel(model, sentence))
 
 # Test model one by one
 def softmax(vals, idx):
@@ -50,7 +48,7 @@ def testModel(model, seq):
     test_start = time.time()
     max_len = 64
 
-     # 'individual' excluded
+    # 'individual' excluded
     classes = np.array(['woman/family', 'man', 'minority', 'race/nationality', 'age', 'region', 'religion', 'extra', 'curse', 'clean'])
     # classes = np.array(["여성/가족","남성","성소수자","인종/국적","연령","지역","종교","기타 혐오","악플/욕설","clean"])
 
@@ -63,3 +61,7 @@ def testModel(model, seq):
     print("신뢰도는:", "{:2f}%".format(scores[idx]))
     print("Time elapsed:", time.time()-test_start)
 
+    return {"scores": scores.tolist(), "classes": classes.tolist(), "maxClass": classes[idx], "reliability": "{:2f}".format(scores[idx])}
+
+if __name__ == "__main__":
+    app.run()
