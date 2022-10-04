@@ -1,10 +1,10 @@
-# ignore model file
-Smile/tmp/model.pth
+# ignore KcBERT model&tokenizer file
+KcBERT/model/kcbert-model.pth
+KcBERT/model/kcbert-tokenizer.pth
+
+# ignore KoBERT model file
+KoBERT/model/model.pth
 
 # ignore external kobert package
 Smile/tmp/.cache/kobert_v1.zip
 Smile/tmp/.cache/kobert_from_pretrained/pytorch_model.bin
-
-
-DeokYo
-DeokYoung/test.ipynb
