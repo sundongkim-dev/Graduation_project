@@ -50,8 +50,7 @@
 
 ### 디렉터리 구조
 
-![directory structure](https://user-images.githubusercontent.com/44566164/192562725-b22a8a3d-b30b-4929-b84b-95da2b887597.png)
-
+![directory structure](https://user-images.githubusercontent.com/44566164/193811585-e63e5f3e-669a-45bb-a1fe-e1fbbba8ad2c.png)
 
 ## 모델 학습 환경 및 지표
 
