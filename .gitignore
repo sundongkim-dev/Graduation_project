@@ -1,5 +1,5 @@
 # ignore model file
-Smile/tmp/model.pth
+kobert/model/model.pth
 
 # ignore external kobert package
 Smile/tmp/.cache/kobert_v1.zip
