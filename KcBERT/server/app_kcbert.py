@@ -1,25 +1,19 @@
 from flask import Flask, jsonify, render_template, request, url_for
 
-#from MyModel import *
-import os
-
-import torch
+import os, torch, time
 import numpy as np
-import time
 
-
+os.chdir('..')
 base_dir = os.getcwd()
 
 # load kcbert model
-model_path = base_dir + '/model_output/kcbert-model.pth'
-model = torch.load(model_path)
-model.to('cpu')
+model_path = base_dir + '/model/kcbert-model.pth'
+model = torch.load(model_path, map_location=torch.device('cpu'))
 model.eval()
 
 # load kcbert tokenizer
-tokenizer_path = base_dir + '/model_output/kcbert-tokenizer.pth' 
+tokenizer_path = base_dir + '/model/kcbert-tokenizer.pth' 
 tokenizer = torch.load(tokenizer_path)
-
 
 app = Flask(__name__)
 
