@@ -10,6 +10,7 @@
     - 2022/10/02: KcBERT가 성능이 더 뛰어난 이유로 KcBERT로 웹 서빙 결정
     - 2022/10/03: 모델 output 용량 이슈로 온전히 업로드 되지 않았음 -> .gitignore에 추가하고 구글 드라이브로 공유
     - 2022/10/04: 디렉터리 구조 리팩터링
+    - 2022/10/13: MongoDB 선정, 프로토타입 최소 요건 정리, 통계 탭 디자인, 모델 사이즈 명시
 
 ### KoBERT 관련
 0. conda 환경에서 python 3.7 버전을 사용, KoBERT의 requirements.txt를 다음과 같이 변경해야 설치 가능
@@ -62,8 +63,11 @@
 
 1. 데이터셋: 기존 unsmile dataset을 cleaning(약 120개 데이터 re-labeling)한 데이터셋
 2. 사용 모델: KoBERT, KcBERT(KoBERT를 네이버 댓글 데이터를 사용해서 처음부터 학습한 모델)
-    
-    
+
+**모델 크기**
+1. kcbert-model.pth: 425,599KB
+2. kcbert-tokenizer.pth: 665KB
+
 **카테고리별 성능**(f1-score)
 
 ||여성/가족|남성|성소수자|인종/국적|연령|지역|종교|기타 혐오|악플/욕설|clean|
