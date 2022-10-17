@@ -1,6 +1,7 @@
-from flask import Flask, jsonify, render_template, request, url_for
+from flask import Flask, jsonify, render_template, request, url_for, make_response
+from pymongo import MongoClient
 
-import os, torch, time
+import os, torch, time, datetime, json
 import numpy as np
 
 os.chdir('..')
@@ -15,12 +16,21 @@ model.eval()
 tokenizer_path = base_dir + '/model/kcbert-tokenizer.pth' 
 tokenizer = torch.load(tokenizer_path)
 
-app = Flask(__name__)
+# DB 연결
+client = MongoClient('127.0.0.1', 27017) # 127.0.0.1: localhost IP / 27017: 포트 번호 
+db = client.everytime_database           # 연결하고자 하는 데이터베이스
+collection = db.post_collection          # 연결하고자 하는 컬렉션 이름
+print(collection)
 
-@app.route('/')
+app = Flask(__name__)
+app.config['JSON_AS_ASCII'] = False
+@app.route('/') 
 def index(string=None):
     return render_template('demo.html', string=string)
 
+@app.route('/stat')
+def stat(string=None):
+    return render_template('statistics.html', string=string)
 
 @app.route('/predict/<sentence>', methods=['POST', 'GET'])
 def predict(sentence):
@@ -56,6 +66,14 @@ def testModel(model, seq):
     print("Time elapsed:", time.time()-test_start)
 
     return {"scores": scores.tolist(), "classes": classes.tolist(), "maxClass": classes[idx], "reliability": "{:2f}".format(scores[idx])}
+
+@app.route('/statistics', methods=['POST', 'GET'])
+def statistics():
+    if request.method == 'POST':
+        pass
+    elif request.method == 'GET':
+        post_list = list(collection.find({}, {'_id':False}))
+        return jsonify({'data': post_list})
 
 if __name__ == "__main__":
     app.run()
