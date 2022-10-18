@@ -61,9 +61,9 @@ def testModel(model, seq):
     scores = torch.sigmoid(outputs['logits']).squeeze()
     idx = scores.argmax() # probability(sigmoid) of each class
 
-    print("문장의 카테고리는:", classes[idx])
-    print("신뢰도는:", "{:2f}%".format(scores[idx]))
-    print("Time elapsed:", time.time()-test_start)
+    # print("문장의 카테고리는:", classes[idx])
+    # print("신뢰도는:", "{:2f}%".format(scores[idx]))
+    # print("Time elapsed:", time.time()-test_start)
 
     return {"scores": scores.tolist(), "classes": classes.tolist(), "maxClass": classes[idx], "reliability": "{:2f}".format(scores[idx])}
 

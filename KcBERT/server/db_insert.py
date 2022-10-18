@@ -86,21 +86,18 @@ document_example = {
     "content": POST_CONTENT,                # 게시글 내용
     "username": POST_WRITER,                # 게시글 작성자
     "tags": POST_RESULT,                    # 혐오 조장 게시글 결과 여부: 0, 1
-    "date": POST_DATE,                      # 게시글 작성 날짜
-    "time": POST_TIME,                      # 게시글 작성 시간
+    "date": POST_DATE,                      # 게시글 작성 날짜 및 시간
     "comments": [
         { 
             "username": COMMENT_WRITER,     # 댓글 작성자 이름
-            "message": COMMENT_MESSAGE,      # 댓글 내용
-            "date": COMMENT_DATE,           # 댓글 작성 날짜
-            "time": COMMENT_TIME,           # 댓글 작성 시간
-            "result": COMMENT_RESULT,       # 댓글 분류 결과: 0 ~ 9
+            "message": COMMENT_MESSAGE,     # 댓글 내용
+            "time": COMMENT_DATE,           # 댓글 작성 날짜 및 시간
+            "result": COMMENT_RESULT,       # 댓글 분류 결과: 카테고리 명
             "precision": COMMENT_PRECISION  # 댓글 분류 신뢰도
         },
         { 
             "username": COMMENT_WRITER,
             "message": COMMENT_MESSAGE,
-            "date": COMMENT_DATE,
             "time": COMMENT_TIME,
             "result": COMMENT_RESULT,
             "precision": COMMENT_PRECISION
