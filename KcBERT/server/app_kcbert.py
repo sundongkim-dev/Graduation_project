@@ -40,14 +40,6 @@ def predict(sentence):
         print(testModel(model, sentence))
         return jsonify(testModel(model, sentence))
 
-# Test model one by one
-def softmax(vals, idx):
-    valscpu = vals.cpu().detach().squeeze(0)
-    a = 0
-    for i in valscpu:
-        a += np.exp(i)
-    return ((np.exp(valscpu[idx]))/a).item() * 100
-
 def testModel(model, seq):
     test_start = time.time()
     max_len = 64

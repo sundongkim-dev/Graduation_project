@@ -6,12 +6,13 @@ from app_kcbert import testModel
 
 base_dir = os.getcwd()
 
-#load kcbert model & tokenizer
+#load kcbert model & tokenizer - 서버에서 먼저 실행해야 현재 작업 디렉터리 올바르게 됨, 서버 먼저 실행안하면 오류 발생!
 model_path = base_dir + '/model/kcbert-model.pth'
 model = torch.load(model_path, map_location=torch.device('cpu'))
 model.eval()
 tokenizer_path = base_dir + '/model/kcbert-tokenizer.pth' 
 tokenizer = torch.load(tokenizer_path)
+
 # DB 연결
 client = MongoClient('127.0.0.1', 27017) # 127.0.0.1: localhost IP / 27017: 포트 번호 
 db = client.everytime_database           # 연결하고자 하는 데이터베이스
@@ -32,7 +33,7 @@ def modify_date(_date):
         n_minutes_before = n_minutes_before.strftime("%y/%m/%d %H:%M")
         _date = n_minutes_before
     # 10/17 19:39
-    elif len(_date.split()[0]) != 7:
+    elif len(_date) == len("10/17 19:39"):
         _date = datetime.datetime.today().strftime("%y/%m/%d %H:%M")[:3] + _date
     else:
         pass
@@ -54,8 +55,8 @@ for item in post_list:
 
     # 게시글 날짜 포맷팅
     if not is_valid_format_date(item['date']): # 21/12/12 19:39
-        modified_flag = True
         item['date'] = modify_date(item['date'])
+        modified_flag = True
     
     # 댓글들 포맷팅
     for item2 in item['comments']:
@@ -64,16 +65,16 @@ for item in post_list:
         
         # 날짜 포맷팅
         if not is_valid_format_date(item2['time']):
-            modified_flag = True
             item2['time'] = modify_date(item2['time'])
+            modified_flag = True
         
         # result, precision 채워 넣기
         if "result" not in item2:
-            modified_flag = True
             S = item2['message']
             res = testModel(model, S)
             result = res["maxClass"]
             precision = res["reliability"]
+
             if result == 'clean':
                 clean_flag = True
             elif result == 'curse':
@@ -82,6 +83,7 @@ for item in post_list:
                 hate_flag = True
             item2['result'] = result
             item2['precision'] = precision
+            modified_flag = True
 
     if hate_flag or abuse_flag:
         item['tags'] = 1

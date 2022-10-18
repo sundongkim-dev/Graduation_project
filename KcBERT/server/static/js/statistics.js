@@ -31,6 +31,7 @@ const CalcObj = {
                                     </thead>
                                     <tbody>
             `       
+            table.innerHTML += row
             for (var j = 0; j<dataFromDB[i].comments.length; j++){
                 var row = `
                                         <tr>                           
@@ -99,9 +100,3 @@ function initConfig() {
 document.addEventListener("DOMContentLoaded", () => {
     initConfig();
 });
-
-$(function(){
-    $(".table table-hover tr.view").on("click", function(){
-      $(this).toggleClass("open").next(".fold").toggleClass("open");
-    });
-  });
