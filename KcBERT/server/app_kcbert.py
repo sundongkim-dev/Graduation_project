@@ -1,4 +1,4 @@
-from flask import Flask, jsonify, render_template, request, url_for, make_response
+from flask import Flask, jsonify, render_template, request, url_for, redirect, make_response
 from pymongo import MongoClient
 
 import os, torch, time, datetime, json
@@ -24,8 +24,13 @@ print(collection)
 
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
-@app.route('/') 
-def index(string=None):
+
+@app.route('/')
+def index():
+    return redirect(url_for('demo'))
+
+@app.route('/demo') 
+def demo(string=None):
     return render_template('demo.html', string=string)
 
 @app.route('/stat')
