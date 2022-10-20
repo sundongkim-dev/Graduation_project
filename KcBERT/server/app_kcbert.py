@@ -37,6 +37,10 @@ def demo(string=None):
 def stat(string=None):
     return render_template('statistics.html', string=string)
 
+@app.route('/analysis')
+def analysis(string=None):
+    return render_template('analysis.html', string=string)
+
 @app.route('/predict/<sentence>', methods=['POST', 'GET'])
 def predict(sentence):
     if request.method == 'POST':
