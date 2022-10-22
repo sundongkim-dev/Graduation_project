@@ -17,9 +17,9 @@ collection = db.post_collection          # 연결하고자 하는 컬렉션 이�
 hhmm = [str(x) if x > 9 else "0" + str(x) for x in range(24)]
 
 # 1번 쿼리
-def first_query(yy, mm, dd):
+def getDailyComment(yy, mm, dd):
     res = []
-    _date = ".*" + str(yy) + "/" + str(mm) + "/" + str(dd) + ".*"
+    _date = ".*" + str(yy) + "/" + str(mm).zfill(2) + "/" + str(dd).zfill(2) + ".*"
     
     # 전체 댓글 수 
     first_condition = [
@@ -72,9 +72,9 @@ def first_query(yy, mm, dd):
     return res, hate_dict
 
 # 2번 쿼리
-def second_query(yy, mm, dd):
+def getHourlyComment(yy, mm, dd):
     res = []
-    _date = ".*" + str(yy) + "/" + str(mm) + "/" + str(dd)
+    _date = ".*" + str(yy) + "/" + str(mm).zfill(2) + "/" + str(dd).zfill(2)
     # 전체 게시글 수
     first_condition = {"date": {'$regex': _date + ".*"}}
     first_condition_result = collection.count_documents(first_condition)
@@ -94,10 +94,10 @@ def second_query(yy, mm, dd):
     return res
 
 # 3번 쿼리
-def third_query(yy, mm):
+def getMonthlyComment(yy, mm):
     # 특정 월 한 달 동안에 대한 전체 댓글/혐오 댓글/악플 댓글/전체 게시글/혐오 조장글 개수
     res = []
-    _date = ".*" + str(yy) + "/" + str(mm) + ".*"
+    _date = ".*" + str(yy) + "/" + str(mm).zfill(2) + ".*"
     # 전체 게시글
     zero_condition =  {"date": {'$regex': _date + ".*"}}
     zero_condition_result = collection.count_documents(zero_condition)
@@ -157,9 +157,9 @@ def third_query(yy, mm):
 
     return res, hate_dict
 
-first_query_ans, first_query_hate_dict = first_query(22, 10, 17)
-second_query_ans = second_query(22, 10, 17)
-third_query_ans, third_query_hate_dict = third_query(22, 10)
+first_query_ans, first_query_hate_dict = getDailyComment(22, 10, 20)
+second_query_ans = getHourlyComment(22, 10,20)
+third_query_ans, third_query_hate_dict = getMonthlyComment(22, 10)
 
 print(first_query_ans, first_query_hate_dict, second_query_ans)
 print(third_query_ans, third_query_hate_dict)
