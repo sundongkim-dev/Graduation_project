@@ -4,6 +4,8 @@ from pymongo import MongoClient
 import os, torch, time, datetime, json
 import numpy as np
 
+import db_query
+
 os.chdir('..')
 base_dir = os.getcwd()
 
@@ -48,6 +50,26 @@ def predict(sentence):
     elif request.method == 'GET':
         print(testModel(model, sentence))
         return jsonify(testModel(model, sentence))
+
+@app.route('/graphdata/<period>')
+def graphdata(period):
+    if period == 'monthly':
+        res, hate_dict = db_query.getMonthlyComment(request.args.get('yy'), request.args.get('mm'))
+        if res:
+            return jsonify({'totalPosts': res[0], 'totalComments': res[1], 'hatePosts': res[2], 'hateCommentList': hate_dict})
+        else:
+            return jsonify({'totalPosts': 0, 'totalComments': 0, 'hatePosts': 0, 'hateCommentList': hate_dict})
+    elif period == 'daily':
+        res, hate_dict = db_query.getDailyComment(request.args.get('yy'), request.args.get('mm'), request.args.get('dd'))
+        if res:
+            return jsonify({'totalComments': res[0], 'hateCommentList': hate_dict})
+        else:
+            return jsonify({'totalComments': 0, 'hateCommentList': hate_dict})
+    elif period == 'hourly':
+        res = db_query.getHourlyComment(request.args.get('yy'), request.args.get('mm'), request.args.get('dd'))
+        return jsonify({'hateCommentHourlyCountList': res})
+    else:
+        return jsonify({'data':[]})
 
 def testModel(model, seq):
     test_start = time.time()
