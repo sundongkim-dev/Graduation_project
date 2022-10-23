@@ -8,3 +8,6 @@ KoBERT/model/model.pth
 # ignore external kobert package
 Smile/tmp/.cache/kobert_v1.zip
 Smile/tmp/.cache/kobert_from_pretrained/pytorch_model.bin
+
+# deok young's workspace
+DeokYoung/
