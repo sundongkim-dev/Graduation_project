@@ -6,11 +6,6 @@ import traceback
 host = 'localhost'
 port = 27017
 
-# # DB 연결
-# client = MongoClient('127.0.0.1', 27017) # 127.0.0.1: localhost IP / 27017: 포트 번호 
-# db = client.everytime_database           # 연결하고자 하는 데이터베이스
-# collection = db.post_collection          # 연결하고자 하는 컬렉션 이름
-
 ''' 구현해야할 쿼리 목록
 C 커뮤니티의 
 1. yy년 mm월의 cleanPost(정상 게시글), hatePost(혐오 게시글)의 수
@@ -23,7 +18,6 @@ C 커뮤니티의
 
 hhmm = [str(x) if x > 9 else "0" + str(x) for x in range(24)]
 hate = ['woman/family', 'man', 'minority', 'race/nationality', 'age', 'region', 'religion', 'extra']
-
 
 # 1번 쿼리, 4번 쿼리
 def getMonthlyOrDailyPosts(C, yy, mm, dd=0):
@@ -230,8 +224,9 @@ def getDailyOrHourlyHatePostsNComments(C, yy, mm, dd=0):
         client.close()
         print('DB connection closed')
 
-#res = getMonthlyOrDailyPosts("everytime", 22, 10, 18)
-#res = getMonthlyOrDailyComments("everytime", 22, 10, 17)
-#res = getDailyHatePostsNComments("everytime", 22, 10)
-res = getDailyOrHourlyHatePostsNComments("everytime", 22, 10)
-print(res)
+if __name__=="__main__":
+    #res = getMonthlyOrDailyPosts("everytime", 22, 10, 18)
+    #res = getMonthlyOrDailyComments("everytime", 22, 10, 17)
+    #res = getDailyHatePostsNComments("everytime", 22, 10)
+    res = getDailyOrHourlyHatePostsNComments("everytime", 22, 10)
+    print(res)
