@@ -2,6 +2,7 @@ from pymongo import MongoClient
 
 import os, torch, time, datetime, json, re
 import numpy as np
+import traceback
 from app_kcbert import testModel
 
 base_dir = os.getcwd()
