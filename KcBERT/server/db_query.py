@@ -24,6 +24,7 @@ C 커뮤니티의
 hhmm = [str(x) if x > 9 else "0" + str(x) for x in range(24)]
 hate = ['woman/family', 'man', 'minority', 'race/nationality', 'age', 'region', 'religion', 'extra']
 
+
 # 1번 쿼리, 4번 쿼리
 def getMonthlyOrDailyPosts(C, yy, mm, dd=0):
     '''     
