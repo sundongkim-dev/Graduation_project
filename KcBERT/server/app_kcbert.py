@@ -29,7 +29,11 @@ app.config['JSON_AS_ASCII'] = False
 
 @app.route('/')
 def index():
-    return redirect(url_for('demo'))
+    return redirect(url_for('introduce'))
+
+@app.route('/introduce') 
+def introduce(string=None):
+    return render_template('introduce.html', string=string)
 
 @app.route('/demo') 
 def demo(string=None):
