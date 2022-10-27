@@ -9,7 +9,7 @@ const ShowObj = {
                 labels: ['정상', '혐오조장'],
                 datasets: [{
                     label: '일간 게시글 분석',
-                    data: [500, 50], // [정상게시글수, 혐오조장게시글수]
+                    data: [123, 12], // [정상게시글수, 혐오조장게시글수]
                     backgroundColor: ['rgb(54, 162, 235)', 'rgb(255, 99, 132)'],
                     hoverOffset: 4
                 }]
@@ -22,7 +22,7 @@ const ShowObj = {
                 labels: ['정상', '악플', '혐오'],
                 datasets: [{
                     label: '일간 댓글 분석',
-                    data: [5000, 300, 200], // [정상댓글수, 악플댓글수, 혐오댓글수]
+                    data: [1234, 123, 123], // [정상댓글수, 악플댓글수, 혐오댓글수]
                     backgroundColor: ['rgb(54, 162, 235)', 'rgb(255, 205, 86)', 'rgb(255, 99, 132)'],
                     hoverOffset: 4
                 }]
@@ -32,7 +32,7 @@ const ShowObj = {
         this._chartSet.lineDailyChart = new Chart(document.getElementById('lineDailyChart').getContext('2d'), {
             type: 'line',
             data: {
-                labels: ["0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"].slice(0, 24),
+                labels: ["0:00", "1:00", "2:00", "3:00", "4:00", "5:00", "6:00", "7:00", "8:00", "9:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00", "20:00", "21:00", "22:00", "23:00"],
                 datasets: [{
                     label: '전일 혐오조장글 수',
                     data: [15, 20, 25, 30, 15, 25, 30, 15, 15, 20, 25, 30, 15, 25, 30, 15, 15, 20, 25, 30, 15, 25, 30, 15], // 전일 시간별 악성 댓글 수 배열
@@ -56,7 +56,7 @@ const ShowObj = {
                 labels: ['정상', '혐오조장'],
                 datasets: [{
                     label: '월간 게시글 분석',
-                    data: [2211, 142], // [정상게시글수, 혐오조장게시글수]
+                    data: [1234, 123], // [정상게시글수, 혐오조장게시글수]
                     backgroundColor: ['rgb(54, 162, 235)', 'rgb(255, 99, 132)'],
                     hoverOffset: 4
                 }]
@@ -69,7 +69,7 @@ const ShowObj = {
                 labels: ['정상', '악플', '혐오'],
                 datasets: [{
                     label: '월간 게시글 분석',
-                    data: [15000, 1300, 800], // [정상댓글수, 악플댓글수, 혐오댓글수]
+                    data: [12345, 1234, 123], // [정상댓글수, 악플댓글수, 혐오댓글수]
                     backgroundColor: ['rgb(54, 162, 235)', 'rgb(255, 205, 86)', 'rgb(255, 99, 132)'],
                     hoverOffset: 4
                 }]
@@ -79,16 +79,18 @@ const ShowObj = {
         this._chartSet.lineMonthlyChart = new Chart(document.getElementById('lineMonthlyChart').getContext('2d'), {
             type: 'line',
             data: {
-                labels: ["1일-5일", "6일-10일", "11일-15일", "16일-20일", "21일-25일", "26일-"].slice(0, 6),
+                labels: ["1일", "2일", "3일", "4일", "5일", "6일", "7일", "8일", "9일", "10일",
+                        "11일", "12일", "13일", "14일", "15일", "16일", "17일", "18일", "19일", "20일",
+                        "21일", "22일", "23일", "24일", "25일", "26일", "27일", "28일", "29일", "30일", "31일"],
                 datasets: [{
                     label: '전월 혐오조장글 수',
-                    data: [125, 201, 232, 220, 120, 94], // 전월 일별 혐오조장글 수 배열 (5일간격)
+                    data: [125, 201, 232, 220, 120, 94], // 전월 일별 혐오조장글 수 배열
                     fill: true,
                     borderColor: 'rgb(211, 211, 211)',
                     tension: 0.05
                     }, {
                     label: '금월 혐오조장글 수',
-                    data: [153, 195, 200], // 금월 일별 혐오조장글 수 배열 (5일간격)
+                    data: [153, 195, 200], // 금월 일별 혐오조장글 수 배열
                     fill: true,
                     borderColor: 'rgb(54, 162, 235)',
                     tension: 0.05
@@ -126,49 +128,89 @@ const CalcObj = {
     },
 
     loadData: function() {
+        // 일간 조회
+
         // 오늘 날짜에 대한 댓글 통계 조회
         var httpRequest = new XMLHttpRequest();
 		httpRequest.addEventListener("load", () => {
 			const result = JSON.parse(httpRequest.responseText);
             // 일간 댓글 통계 그래프
-            ShowObj.modifyChartData("commentDailyChart", [result.hateCommentList.clean, result.hateCommentList.curse, result.totalComments - result.hateCommentList.clean - result.hateCommentList.curse]);
+            ShowObj.modifyChartData("commentDailyChart", [result.cleanComment, result.curseComment, result.hateComment]);
 		});
-		httpRequest.open("GET", "/graphdata/daily" + this._getDateQuery());
+		httpRequest.open("GET", "/graphdata/everytime/dailycomment" + this._getDateQuery());
 		httpRequest.send();
 
-        // 오늘 날짜에 대한 글 통계 및 시간별 글 통계 조회
+        // 오늘 날짜에 대한 글 통계 조회
         var httpRequest2 = new XMLHttpRequest();
 		httpRequest2.addEventListener("load", () => {
-			const result = JSON.parse(httpRequest2.responseText)["hateCommentHourlyCountList"];
+			const result = JSON.parse(httpRequest2.responseText);
             // 일간 게시글 통계 그래프
-            ShowObj.modifyChartData("postDailyChart", [result[0] - result[1], result[1]]);
-            ShowObj.modifyChartData('lineDailyChart', result.slice(2), 1);
+            ShowObj.modifyChartData("postDailyChart", [result.cleanPost, result.hatePost]);
 		});
-		httpRequest2.open("GET", "/graphdata/hourly" + this._getDateQuery());
+		httpRequest2.open("GET", "/graphdata/everytime/dailypost" + this._getDateQuery());
 		httpRequest2.send();
 
-        // 어제 날짜에 대한 시간별 글 통계 조회
+        // 오늘 날짜에 대한 시간별 글 통계 조회
         var httpRequest3 = new XMLHttpRequest();
 		httpRequest3.addEventListener("load", () => {
-			const result = JSON.parse(httpRequest3.responseText)["hateCommentHourlyCountList"];
-            // 일간 게시글 통계 그래프
-            ShowObj.modifyChartData('lineDailyChart', result.slice(2), 0);
+			const result = JSON.parse(httpRequest3.responseText);
+            // 일간 시간별 글 통계 그래프
+            ShowObj.modifyChartData('lineDailyChart', result.hatePost, 1);
 		});
-		httpRequest3.open("GET", "/graphdata/hourly" + this._getYesterdayQuery());
+		httpRequest3.open("GET", "/graphdata/everytime/dailyhourlystat" + this._getDateQuery());
 		httpRequest3.send();
 
-        // 이번달에 대한 시간별 글 통계 조회
+        // 어제 날짜에 대한 시간별 글 통계 조회
         var httpRequest4 = new XMLHttpRequest();
 		httpRequest4.addEventListener("load", () => {
 			const result = JSON.parse(httpRequest4.responseText);
-            // 월간 게시글 통계 그래프
-            ShowObj.modifyChartData('postMonthlyChart', [result.totalPosts - result.hatePosts, result.hatePosts]);
-
-            // 월간 댓글 통계 그래프
-            ShowObj.modifyChartData('commentMonthlyChart', [result.hateCommentList.clean, result.hateCommentList.curse, result.totalComments - result.hateCommentList.clean - result.hateCommentList.curse]);
+            // 일간 시간별 글 통계 그래프
+            ShowObj.modifyChartData('lineDailyChart', result.hatePost, 0);
 		});
-		httpRequest4.open("GET", "/graphdata/monthly" + this._getDateQuery());
+		httpRequest4.open("GET", "/graphdata/everytime/dailyhourlystat" + this._getYesterdayQuery());
 		httpRequest4.send();
+
+        // 월간 조회
+
+        // 이번달 날짜에 대한 댓글 통계 조회
+        var httpRequest5 = new XMLHttpRequest();
+		httpRequest5.addEventListener("load", () => {
+			const result = JSON.parse(httpRequest5.responseText);
+            // 월간 댓글 통계 그래프
+            ShowObj.modifyChartData("commentMonthlyChart", [result.cleanComment, result.curseComment, result.hateComment]);
+		});
+		httpRequest5.open("GET", "/graphdata/everytime/monthlycomment" + this._getDateQuery());
+		httpRequest5.send();
+
+        // 이번달 날짜에 대한 글 통계 조회
+        var httpRequest6 = new XMLHttpRequest();
+		httpRequest6.addEventListener("load", () => {
+			const result = JSON.parse(httpRequest6.responseText);
+            // 월간 게시글 통계 그래프
+            ShowObj.modifyChartData("postMonthlyChart", [result.cleanPost, result.hatePost]);
+		});
+		httpRequest6.open("GET", "/graphdata/everytime/monthlypost" + this._getDateQuery());
+		httpRequest6.send();
+
+        // 이번달 날짜에 대한 시간별 글 통계 조회
+        var httpRequest7 = new XMLHttpRequest();
+		httpRequest7.addEventListener("load", () => {
+			const result = JSON.parse(httpRequest7.responseText);
+            // 월간 날짜별 글 통계 그래프
+            ShowObj.modifyChartData('lineMonthlyChart', result.hatePost, 1);
+		});
+		httpRequest7.open("GET", "/graphdata/everytime/monthlydailystat" + this._getDateQuery());
+		httpRequest7.send();
+
+        // 저번달 날짜에 대한 시간별 글 통계 조회
+        var httpRequest8 = new XMLHttpRequest();
+		httpRequest8.addEventListener("load", () => {
+			const result = JSON.parse(httpRequest8.responseText);
+            // 월간 날짜별 글 통계 그래프
+            ShowObj.modifyChartData('lineMonthlyChart', result.hatePost, 0);
+		});
+		httpRequest8.open("GET", "/graphdata/everytime/monthlydailystat" + this._getLastMonthQuery());
+		httpRequest8.send();
     }
 }
 
