@@ -2,13 +2,8 @@
 1. mongoDB에 수동으로 저장하는 코드
 2. document 양식 기록
 '''
-
 from pymongo import MongoClient
 import datetime
-
-client = MongoClient('127.0.0.1', 27017) # 127.0.0.1: localhost IP / 27017: 포트 번호 
-db = client.everytime_database           # 생성하고자 하는 데이터베이스
-collection = db.post_collection          # 생성하고자 하는 컬렉션 이름
 
 document1 = {
     "board": "자유게시판",
@@ -74,10 +69,6 @@ document2 = {
     ]
 }
 
-DOCUMENTS = [document1, document2]
-collection.insert_many(DOCUMENTS)
-
-
 ''' document 포맷
 document_example = {
     "_id": POST_ID,                         # 게시글 id
@@ -105,3 +96,17 @@ document_example = {
     ]
 }
 '''
+host = 'localhost'
+port = 27017
+if __name__=="__main__":    
+    try:
+        client = MongoClient(host=host, port=port) # 추후 서버 띄우면 아이피 및 포트 변경
+        db = client["community_database"]
+        collection = db[C]
+        DOCUMENTS = [document1, document2]
+        collection.insert_many(DOCUMENTS)
+    except Exception as e:
+        print(traceback.format_exc())
+    finally:
+        client.close()
+        print('DB connection closed')
