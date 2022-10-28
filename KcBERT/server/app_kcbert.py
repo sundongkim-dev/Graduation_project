@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, render_template, request, url_for, redirect, make_response
 from pymongo import MongoClient
 from apscheduler.schedulers.background import BackgroundScheduler # pip install APScheduler
+import atexit
 
 import os, torch, time, datetime, json
 import numpy as np
