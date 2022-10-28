@@ -55,23 +55,24 @@ def predict(sentence):
         print(testModel(model, sentence))
         return jsonify(testModel(model, sentence))
 
-@app.route('/graphdata/<period>')
-def graphdata(period):
-    if period == 'monthly':
-        res, hate_dict = db_query.getMonthlyComment(request.args.get('yy'), request.args.get('mm'))
-        if res:
-            return jsonify({'totalPosts': res[0], 'totalComments': res[1], 'hatePosts': res[2], 'hateCommentList': hate_dict})
-        else:
-            return jsonify({'totalPosts': 0, 'totalComments': 0, 'hatePosts': 0, 'hateCommentList': hate_dict})
-    elif period == 'daily':
-        res, hate_dict = db_query.getDailyComment(request.args.get('yy'), request.args.get('mm'), request.args.get('dd'))
-        if res:
-            return jsonify({'totalComments': res[0], 'hateCommentList': hate_dict})
-        else:
-            return jsonify({'totalComments': 0, 'hateCommentList': hate_dict})
-    elif period == 'hourly':
-        res = db_query.getHourlyComment(request.args.get('yy'), request.args.get('mm'), request.args.get('dd'))
-        return jsonify({'hateCommentHourlyCountList': res})
+@app.route('/graphdata/<community>/<type>')
+def graphdata(community, type):
+    yy = request.args.get('yy')
+    mm = request.args.get('mm')
+    dd = request.args.get('dd')
+    
+    if type == 'dailypost':
+        return jsonify(db_query.getMonthlyOrDailyPosts(community, yy, mm, dd))
+    elif type == 'dailycomment':
+        return jsonify(db_query.getMonthlyOrDailyComments(community, yy, mm, dd))
+    elif type == 'dailyhourlystat':
+        return jsonify(db_query.getDailyOrHourlyHatePostsNComments(community, yy, mm, dd))
+    elif type == 'monthlypost':
+        return jsonify(db_query.getMonthlyOrDailyPosts(community, yy, mm))
+    elif type == 'monthlycomment':
+        return jsonify(db_query.getMonthlyOrDailyComments(community, yy, mm))
+    elif type == 'monthlydailystat':
+        return jsonify(db_query.getDailyOrHourlyHatePostsNComments(community, yy, mm))
     else:
         return jsonify({'data':[]})
 

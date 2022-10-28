@@ -4,6 +4,7 @@
 '''
 from pymongo import MongoClient
 import datetime
+import traceback
 
 document1 = {
     "board": "자유게시판",
