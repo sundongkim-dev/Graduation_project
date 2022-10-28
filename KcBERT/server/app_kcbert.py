@@ -1,5 +1,6 @@
 from flask import Flask, jsonify, render_template, request, url_for, redirect, make_response
 from pymongo import MongoClient
+from apscheduler.schedulers.background import BackgroundScheduler # pip install APScheduler
 
 import os, torch, time, datetime, json
 import numpy as np
@@ -18,14 +19,33 @@ model.eval()
 tokenizer_path = base_dir + '/model/kcbert-tokenizer.pth' 
 tokenizer = torch.load(tokenizer_path)
 
-# DB 연결
-client = MongoClient('127.0.0.1', 27017) # 127.0.0.1: localhost IP / 27017: 포트 번호 
-db = client.everytime_database           # 연결하고자 하는 데이터베이스
-collection = db.post_collection          # 연결하고자 하는 컬렉션 이름
-print(collection)
-
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
+
+sched = BackgroundScheduler()
+
+@sched.scheduled_job('interval', seconds=300, id='test_1')
+def macro():
+    def doCrawl():
+        print('Crawling 종료'); print('-----------')
+        pass
+    def doInsert():
+        print('DB insert 종료'); print('-----------')
+        pass
+    def doRefresh():
+        print('DB refresh 종료'); print('-----------')
+        pass
+    print(f'매크로 시작 : {time.strftime("%H:%M:%S")}')
+    docrawl()
+    doInsert()
+    doRefresh()
+    print(f'매크로 종료 : {time.strftime("%H:%M:%S")}')
+
+print('sched before~')
+sched.start()
+print('sched after~')
+atexit.register(lambda: sched.shutdown())
+
 
 @app.route('/')
 def index():
