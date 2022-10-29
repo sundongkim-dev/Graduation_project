@@ -227,5 +227,5 @@ if __name__=="__main__":
     #res = getMonthlyOrDailyPosts("everytime", 22, 10, 18)
     #res = getMonthlyOrDailyComments("everytime", 22, 10, 17)
     #res = getDailyHatePostsNComments("everytime", 22, 10)
-    res = getDailyOrHourlyHatePostsNComments("everytime", 22, 10)
-    print(res)
+    #res = getDailyOrHourlyHatePostsNComments("everytime", 22, 10)
+    pass
