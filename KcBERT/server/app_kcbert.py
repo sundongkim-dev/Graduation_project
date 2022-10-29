@@ -11,8 +11,10 @@ import fmkorea_crawling
 import db_insert
 import db_refresh
 
+# 작업 디렉터리 설정
 os.chdir('..')
 base_dir = os.getcwd()
+
 # load kcbert model
 model_path = base_dir + '/model/kcbert-model.pth'
 model = torch.load(model_path, map_location=torch.device('cpu'))
@@ -43,11 +45,8 @@ def macro():
     print('DB refresh 종료'); print('-----------')
     print(f'매크로 종료 : {time.strftime("%H:%M:%S")}')
 
-print('sched before~')
 sched.start()                             # 스케쥴러 시작
-print('sched after~')
 atexit.register(lambda: sched.shutdown()) # 서버 종료시 스케쥴러 내리기
-
 
 @app.route('/')
 def index():
@@ -100,8 +99,8 @@ def graphdata(community, type):
 
 def testModel(model, seq):
     test_start = time.time()
-    max_len = 64
-
+    max_len = 256
+    seq = seq[:max_len]
     # 'individual' excluded
     classes = np.array(['woman/family', 'man', 'minority', 'race/nationality', 'age', 'region', 'religion', 'extra', 'curse', 'clean'])
     # classes = np.array(["여성/가족","남성","성소수자","인종/국적","연령","지역","종교","기타 혐오","악플/욕설","clean"])
