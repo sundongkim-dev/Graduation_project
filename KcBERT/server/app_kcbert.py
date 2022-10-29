@@ -7,10 +7,12 @@ import os, torch, time, datetime, json
 import numpy as np
 
 import db_query
+import fmkorea_crawling
+import db_insert
+import db_refresh
 
 os.chdir('..')
 base_dir = os.getcwd()
-
 # load kcbert model
 model_path = base_dir + '/model/kcbert-model.pth'
 model = torch.load(model_path, map_location=torch.device('cpu'))
@@ -25,27 +27,26 @@ app.config['JSON_AS_ASCII'] = False
 
 sched = BackgroundScheduler()
 
-@sched.scheduled_job('interval', seconds=300, id='test_1')
+@sched.scheduled_job('interval', seconds=300, id='db')
 def macro():
-    def doCrawl():
-        print('Crawling 종료'); print('-----------')
-        pass
-    def doInsert():
-        print('DB insert 종료'); print('-----------')
-        pass
-    def doRefresh():
-        print('DB refresh 종료'); print('-----------')
-        pass
+    os.chdir('server')
     print(f'매크로 시작 : {time.strftime("%H:%M:%S")}')
-    docrawl()
-    doInsert()
-    doRefresh()
+    res = fmkorea_crawling.crawling()
+    print('Crawling 종료'); print('-----------')
+
+    db_insert.insertDocuments('localhost', 27017, 'fmkorea', res)
+    print('DB insert 종료'); print('-----------')
+
+    os.chdir('..')
+    db_refresh.refresh_db('localhost', 27017, 'fmkorea')
+
+    print('DB refresh 종료'); print('-----------')
     print(f'매크로 종료 : {time.strftime("%H:%M:%S")}')
 
 print('sched before~')
-sched.start()
+sched.start()                             # 스케쥴러 시작
 print('sched after~')
-atexit.register(lambda: sched.shutdown())
+atexit.register(lambda: sched.shutdown()) # 서버 종료시 스케쥴러 내리기
 
 
 @app.route('/')
