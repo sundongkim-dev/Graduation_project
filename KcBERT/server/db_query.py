@@ -1,5 +1,4 @@
 from pymongo import MongoClient
-from bson.son import SON
 
 import traceback
  

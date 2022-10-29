@@ -3,16 +3,7 @@ from pymongo import MongoClient
 import os, torch, time, datetime, json, re
 import numpy as np
 import traceback
-from app_kcbert import testModel
- 
-base_dir = os.getcwd()
-
-#load kcbert model & tokenizer - 서버에서 먼저 실행해야 현재 작업 디렉터리 올바르게 됨, 서버 먼저 실행안하면 오류 발생!
-model_path = base_dir + '/model/kcbert-model.pth'
-model = torch.load(model_path, map_location=torch.device('cpu'))
-model.eval()
-tokenizer_path = base_dir + '/model/kcbert-tokenizer.pth' 
-tokenizer = torch.load(tokenizer_path)
+import app_kcbert
 
 def refresh_db(host, port, C):
     ''' DB 데이터 유효성 확인 후 포맷에 맞게 변경하는 함수이다.
@@ -24,6 +15,20 @@ def refresh_db(host, port, C):
     Returns:
         None        
     '''
+    # 모델 로드
+    try:
+        base_dir = os.getcwd()
+        #load kcbert model & tokenizer - 서버에서 먼저 실행해야 현재 작업 디렉터리 올바르게 됨, 서버 먼저 실행안하면 오류 발생!
+        model_path = base_dir + '/model/kcbert-model.pth'
+        model = torch.load(model_path, map_location=torch.device('cpu'))
+        model.eval()
+        tokenizer_path = base_dir + '/model/kcbert-tokenizer.pth' 
+        tokenizer = torch.load(tokenizer_path)
+    except Exception as e:
+        print(traceback.format_exc())
+    finally:
+        print('db_refresh: model loaded')
+
     try:
         client = MongoClient(host=host, port=port) # 추후 서버 띄우면 아이피 및 포트 변경
         db = client["community_database"]
@@ -46,7 +51,7 @@ def refresh_db(host, port, C):
                 # result, precision 채워 넣기
                 if "result" not in item2:
                     S = item2['message']
-                    res = testModel(model, S)
+                    res = app_kcbert.testModel(model, S)
                     result = res["maxClass"]
                     precision = res["reliability"]
 
