@@ -90,7 +90,7 @@ KoBERT, KcBERT 모두 15 epoch으로 학습
 
 epoch별 loss 변화 추이 그래프
 
-![loss_per_epochs](loss_per_epochs.PNG)
+![loss_per_epochs](/Graduation_project/KcBERT/model/result/img/loss_per_epochs.png)
 
 **5. 카테고리별 성능**(f1-score)
 1. 데이터셋: 기존 unsmile dataset을 cleaning(약 120개 데이터 re-labeling)한 데이터셋
