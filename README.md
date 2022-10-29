@@ -18,7 +18,8 @@
     - 2022/10/21: 통계에 필요한 쿼리들 구현 -> 미스커뮤니케이션으로 인한 잘못된 설계 추후 업데이트
     - 2022/10/22: DB와 그래프 연동 구현
     - 2022/10/27: 쿼리 업데이트, 모델 지표 페이지, 네비게이션 바 항목 및 콜랩스 추가
-    - 2022/10/28: 크롤링 모듈 구현, db에 데이터 삽입 및 refresh 자동화 구현
+    - 2022/10/28: 크롤링 모듈 구현, db에 약 20개의 데이터 삽입 및 refresh 자동화 구현
+    - 2022/10/29: 표본 데이터 DB 삽입, 로그 출력 20개 제한
 
 ### KoBERT 관련
 0. conda 환경에서 python 3.7 버전을 사용, KoBERT의 requirements.txt를 다음과 같이 변경해야 설치 가능
@@ -56,26 +57,26 @@
     - torch==1.12.0
     - webdriver-manager==3.8.4
 
+1. KcBERT가 KoBERT보다 성능이 뛰어난 관계로 KcBERT 모델로 웹 서비스
+
 ### 디렉터리 구조
 
 ![directory structure](https://user-images.githubusercontent.com/44566164/193811585-e63e5f3e-669a-45bb-a1fe-e1fbbba8ad2c.png)
 
 ## 모델 학습 환경 및 지표
 
-**-서버 환경**: linux
+**0. 서버 환경**: linux
 
-**-가상환경**: anaconda 4.14.0(python 3.8.13)
+**1. 가상환경**: anaconda 4.14.0(python 3.8.13)
 
-**-데이터셋**
+**2. 데이터셋**
 
 기존 unsmile dataset을 cleaning(약 120개 데이터 re-labeling)한 데이터셋
 
-**-모델**
+**3. 모델**
 
 1. KoBERT: 한국어 위키, 뉴스 기사, 책 등 잘 정제된 데이터를 사용하여 사전학습한 모델
 2. KcBERT: 네이버 뉴스의 댓글과 대댓글을 수집해 토크나이저와 BERT모델을 처음부터 사전학습한 모델
-
-모델 스펙
 
 ||vocabulary size|number of parameters|model size(model.bin)|
 |---|---|---|---|
@@ -83,7 +84,7 @@
 |KcBERT|30000|108926218|435.77MB|
 
 
-**-학습**
+**4. 학습**
 
 KoBERT, KcBERT 모두 15 epoch으로 학습
 
@@ -91,17 +92,15 @@ epoch별 loss 변화 추이 그래프
 
 ![loss_per_epochs](loss_per_epochs.PNG)
 
-
-**-카테고리별 성능**(f1-score)
-=======
+**5. 카테고리별 성능**(f1-score)
 1. 데이터셋: 기존 unsmile dataset을 cleaning(약 120개 데이터 re-labeling)한 데이터셋
 2. 사용 모델: KoBERT, KcBERT(KoBERT를 네이버 댓글 데이터를 사용해서 처음부터 학습한 모델)
 
-**모델 크기**
+**6. 최종 사용 모델 크기**
 1. kcbert-model.pth: 425,599KB
 2. kcbert-tokenizer.pth: 665KB
 
-**카테고리별 성능**(f1-score)
+**7. 카테고리별 성능**(f1-score)
 
 ||여성/가족|남성|성소수자|인종/국적|연령|지역|종교|기타 혐오|악플/욕설|clean|
 |---|---|---|---|---|---|---|---|---|---|---|
@@ -110,21 +109,9 @@ epoch별 loss 변화 추이 그래프
 |Baseline|0.76|0.85|0.83|0.82|0.83|0.88|0.87|0.30|0.67|0.77|
 * Baseline은 스마일 게이트에서 제공한 수치
 
-
-
-**-Data cleaning 전후 성능(f1-score) 비교**
+**8. Data cleaning 전후 성능(f1-score) 비교**
 
 ||여성/가족|남성|성소수자|인종/국적|연령|지역|종교|기타 혐오|악플/욕설|clean|micro avg|macro avg|
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
 |cleaning 전|0.79|0.84|0.83|0.80|0.82|0.86|0.88|0.00|0.67|0.75|0.76|0.72|
 |cleaning 후|0.79|0.83|0.83|0.80|0.84|0.88|0.88|0.00|0.68|0.75|0.77|0.73|
-* data cleaning이 성능에 영향을 미치는지 파악하기 위해 KcBERT 모델을 사용하여 5 epoch씩 학습시킨 결과
-
-* f1-score 평균 1% 향상
-=======
-* f1-score 평균 1% 향상
-
-
-**Epoch 당 loss 변화 추이**
-
-* 그래프로 보여주자
