@@ -18,7 +18,7 @@
     - 2022/10/21: 통계에 필요한 쿼리들 구현 -> 미스커뮤니케이션으로 인한 잘못된 설계 추후 업데이트
     - 2022/10/22: DB와 그래프 연동 구현
     - 2022/10/27: 쿼리 업데이트, 모델 지표 페이지, 네비게이션 바 항목 및 콜랩스 추가
-
+    - 2022/10/28: 크롤링 모듈 구현, db에 데이터 삽입 및 refresh 자동화 구현
 
 ### KoBERT 관련
 0. conda 환경에서 python 3.7 버전을 사용, KoBERT의 requirements.txt를 다음과 같이 변경해야 설치 가능
@@ -42,20 +42,19 @@
     - ```_, pooler = self.bert(input_ids = token_ids, token_type_ids = segment_ids.long(), attention_mask = attention_mask.float().to(token_ids.device), return_dict=False)```
 
 ### KcBERT 관련
-0. conda 환경에서 python 3.7.13 버전을 사용, 서버 작동을 위해 사용한 패키지 버전은 다음과 같다.
+0. conda 환경에서 python 3.7.13 버전을 사용, 모델 구성 및 서버 구성을 위한 패키지 버전은 다음과 같다.
     - numpy==1.21.5
     - transformers==4.18.0
     - datasets==1.17.0
     - torch==1.12.0
     - Flask==2.2.2
-
-
-## TO-DO list
-
-- 웹사이트 꾸미기 (javascript, css 등)
-- 정보 시각화
-- 웹 디자인
-- 보고서 작성
+    - APScheduler==3.9.1
+    - beautifulsoup4==4.11.1
+    - lxml==4.9.1
+    - pymongo==4.2.0
+    - selenium==4.5.0
+    - torch==1.12.0
+    - webdriver-manager==3.8.4
 
 ### 디렉터리 구조
 
