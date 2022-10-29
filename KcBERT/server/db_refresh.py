@@ -38,7 +38,6 @@ def refresh_db(host, port, C):
         # DB에서 모든 document 꺼내오기
         post_list = list(collection.find({}))
         for asdf, item in enumerate(post_list):
-            print(asdf)
             pid = item['_id']
             hate_flag = False     # 혐오 표현이라면 True
             abuse_flag = False    # 욕설 표현이라면 True
