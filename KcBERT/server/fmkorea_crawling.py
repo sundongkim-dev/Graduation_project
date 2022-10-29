@@ -1,10 +1,10 @@
 import file_save
 import time, re, datetime, json, random
 
-from bs4 import BeautifulSoup # pip install beautifulsoup4, pip install lxml
-from selenium import webdriver # pip install selenium, 추가로 버전에 맞는 chromedriver.exe 받아서 같은 폴더로 이동필요
+from bs4 import BeautifulSoup
+from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager # pip install ChromeDriverManager
+from webdriver_manager.chrome import ChromeDriverManager
 
 def set_chrome_driver():
     chrome_options = webdriver.ChromeOptions()
@@ -17,7 +17,9 @@ def set_chrome_driver():
 def purifyText(text):
     ''' 특수문자 제거한 문자를 반환한다. '''
     result = re.sub(r"[^\uAC00-\uD7A30-9a-zA-Z\s]", "", text)
-    return result
+    if "태그를 지원하지 않는 브라우저" in result: # gif면 빈칸으로 바꾸기
+        return " "
+    return result.strip() + " "
 
 def dateFormat(dateText): 
     '''
@@ -129,7 +131,6 @@ def crawling(visitedFileName = "fmkorea_visited_post.txt", page = 5):
         print("글 제목:", post["title"])
         result.append(post)
         time.sleep(random.uniform(timeSleep - 0.5, timeSleep + 0.5))
-    print(result)   
         
     # 방문목록과 파일 갱신해주고, newVisited -> visited로 이동
     file_save.arrayToFile(visitedFileName, list(newVisited))
