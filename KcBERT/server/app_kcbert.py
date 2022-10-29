@@ -1,14 +1,18 @@
 from flask import Flask, jsonify, render_template, request, url_for, redirect, make_response
 from pymongo import MongoClient
+from apscheduler.schedulers.background import BackgroundScheduler # pip install APScheduler
+import atexit
 
 import os, torch, time, datetime, json
 import numpy as np
 
 import db_query
+import fmkorea_crawling
+import db_insert
+import db_refresh
 
 os.chdir('..')
 base_dir = os.getcwd()
-
 # load kcbert model
 model_path = base_dir + '/model/kcbert-model.pth'
 model = torch.load(model_path, map_location=torch.device('cpu'))
@@ -18,14 +22,32 @@ model.eval()
 tokenizer_path = base_dir + '/model/kcbert-tokenizer.pth' 
 tokenizer = torch.load(tokenizer_path)
 
-# DB 연결
-client = MongoClient('127.0.0.1', 27017) # 127.0.0.1: localhost IP / 27017: 포트 번호 
-db = client.everytime_database           # 연결하고자 하는 데이터베이스
-collection = db.post_collection          # 연결하고자 하는 컬렉션 이름
-print(collection)
-
 app = Flask(__name__)
 app.config['JSON_AS_ASCII'] = False
+
+sched = BackgroundScheduler()
+
+@sched.scheduled_job('interval', seconds=300, id='db')
+def macro():
+    os.chdir('server')
+    print(f'매크로 시작 : {time.strftime("%H:%M:%S")}')
+    res = fmkorea_crawling.crawling()
+    print('Crawling 종료'); print('-----------')
+
+    db_insert.insertDocuments('localhost', 27017, 'fmkorea', res)
+    print('DB insert 종료'); print('-----------')
+
+    os.chdir('..')
+    db_refresh.refresh_db('localhost', 27017, 'fmkorea')
+
+    print('DB refresh 종료'); print('-----------')
+    print(f'매크로 종료 : {time.strftime("%H:%M:%S")}')
+
+print('sched before~')
+sched.start()                             # 스케쥴러 시작
+print('sched after~')
+atexit.register(lambda: sched.shutdown()) # 서버 종료시 스케쥴러 내리기
+
 
 @app.route('/')
 def index():
