@@ -6,6 +6,7 @@ import traceback
 import app_kcbert
 
 def refresh_db(host, port, C):
+    start = time.time()
     ''' DB 데이터 유효성 확인 후 포맷에 맞게 변경하는 함수이다.
     Args:
         host: 서버 호스트
@@ -36,14 +37,30 @@ def refresh_db(host, port, C):
 
         # DB에서 모든 document 꺼내오기
         post_list = list(collection.find({}))
-        for item in post_list:
+        for asdf, item in enumerate(post_list):
+            print(asdf)
             pid = item['_id']
-            modified_flag = False # 수정 있었다면 반영해서 최신화
             hate_flag = False     # 혐오 표현이라면 True
             abuse_flag = False    # 욕설 표현이라면 True
             clean_flag = False    # 클린 표현이라면 True
             
-            # 댓글들 포맷팅
+            # 태그가 달려있다면 수정할 필요 없음!
+            if "tags" in item:
+                continue
+            
+            # 태그가 없다면 수정 필요!
+            # 댓글이 하나도 없다면, 게시글 content로 tag 판단
+            if len(item['comments']) == 0:
+                content_info = app_kcbert.testModel(model, item['content'])
+                content_result = content_info["maxClass"]
+                if content_result == 'clean':
+                    clean_flag = True
+                elif content_result == 'curse':
+                    abuse_flag = True
+                else:
+                    hate_flag = True 
+            
+            # 댓글들 있다면 분류 결과 및 신뢰도 등록!
             for item2 in item['comments']:
                 if item2['message'] == "[삭제된 댓글입니다.]": # 삭제된 것은 넘어가기
                     continue
@@ -64,21 +81,21 @@ def refresh_db(host, port, C):
 
                     item2['result'] = result
                     item2['precision'] = precision
-                    modified_flag = True
 
             if hate_flag or abuse_flag:
                 item['tags'] = 1
             else:
                 item['tags'] = 0
             
-            # 수정 있었다면 DB에 반영
-            if modified_flag:
-                collection.replace_one({'_id':pid}, item)
+            # DB에 반영
+            collection.replace_one({'_id':pid}, item)
 
     except Exception as e:
         print(traceback.format_exc())
     finally:
         client.close()
+        end = time.time()
+        print(f"{end - start:.5f} sec")
         print('DB connection closed')
 
 
