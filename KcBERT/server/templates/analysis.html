@@ -42,24 +42,13 @@
             <h1 class="display-6 fw-bold mb-4">사이트통계</h1>
             <div class="col mx-auto">
                 <p class="lead mb-5">우리 주변 커뮤니티 통계는?</p>
-                <form>
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="btnradio" id="siteButton1" autocomplete="off" checked="">
-                        <label class="btn btn-outline-primary btn-lg" for="siteButton1">A커뮤니티</label>
-                        <input type="radio" class="btn-check" name="btnradio" id="siteButton2" autocomplete="off">
-                        <label class="btn btn-outline-primary btn-lg" for="siteButton2">B커뮤니티</label>
-                        <input type="radio" class="btn-check" name="btnradio" id="siteButton3" autocomplete="off">
-                        <label class="btn btn-outline-primary btn-lg" for="siteButton3">C커뮤니티</label>
-                    </div>
-                </form>
-                <form>
-                    <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
-                        <input type="radio" class="btn-check" name="btnradio" id="dailyButton" autocomplete="off" checked="">
-                        <label class="btn btn-outline-dark" for="dailyButton">일간</label>
-                        <input type="radio" class="btn-check" name="btnradio" id="monthlyButton" autocomplete="off">
-                        <label class="btn btn-outline-dark" for="monthlyButton">월간</label>
-                    </div>
-                </form>
+                <div class="btn-group" role="group" aria-label="Basic radio toggle button group">
+                    <input type="radio" class="btn-check" name="btnradio" id="dailyButton" autocomplete="off" checked="">
+                    <label class="btn btn-outline-primary btn-lg" for="dailyButton">일간</label>
+                    <input type="radio" class="btn-check" name="btnradio" id="monthlyButton" autocomplete="off">
+                    <label class="btn btn-outline-primary btn-lg" for="monthlyButton">월간</label>
+                </div>
+                <p class="m-2"> <input type="date" id="targetDate" onkeydown="return false"> </p>
             </div>
         </div>
     </div>
@@ -77,6 +66,9 @@
         <div class="p-5">
             <canvas id="lineDailyChart"></canvas>
         </div>
+        <div class="p-5">
+            <canvas id="lineDailyCommentChart"></canvas>
+        </div>
     </div>
     <div class="container text-center d-none" id="monthlyAnalysis" style="max-width: 960px; float:none; margin:0 auto">
         <div class="row">
@@ -91,6 +83,9 @@
         </div>
         <div class="p-5">
             <canvas id="lineMonthlyChart"></canvas>
+        </div>
+        <div class="px-5">
+            <canvas id="lineMonthlyCommentChart"></canvas>
         </div>
     </div>
 </body>
