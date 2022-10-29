@@ -75,7 +75,6 @@ def refresh_db(host, port, C):
         # DB에서 모든 document 꺼내오기
         post_list = list(collection.find({}))
         for asdf, item in enumerate(post_list):
-            print(asdf)
             pid = item['_id']
             
             # 태그가 달려있다면 수정할 필요 없음!

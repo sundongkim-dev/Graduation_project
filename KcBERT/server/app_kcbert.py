@@ -111,13 +111,13 @@ def testModel(model, seq):
 
     return {"scores": scores.tolist(), "classes": classes.tolist(), "maxClass": classes[idx], "reliability": "{:2f}".format(scores[idx])}
 
-@app.route('/statistics', methods=['POST', 'GET'])
+@app.route('/statistics')
 def statistics():
-    if request.method == 'POST':
-        pass
-    elif request.method == 'GET':
-        post_list = list(collection.find({}, {'_id':False}))
-        return jsonify({'data': post_list})
+    community = request.args.get('community')
+    if not community:
+        community = "fmkorea"
+    return jsonify({"data": db_query.getNPosts(community)})
+
 
 if __name__ == "__main__":
     app.run()

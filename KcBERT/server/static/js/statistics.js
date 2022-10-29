@@ -11,9 +11,6 @@ const CalcObj = {
                             <td>${this._result[i].board}</td>
                             <td>${this._result[i].title}</td>
                             <td>${this._result[i].content}</td>                            
-                            <!-- <td>${this._result[i].comments[0].message}</td>
-                            <td>${this._result[i].comments[0].result}</td>
-                            <td>${this._result[i].comments[0].precision}</td> -->
                             <td>${this._result[i].tags}</td>
                         </tr>`;
             table.innerHTML += row;
