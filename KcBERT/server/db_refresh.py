@@ -5,8 +5,44 @@ import numpy as np
 import traceback
 import app_kcbert
 
+def get_stat(host, port, C, percentage):
+    try:
+        hate = ['woman/family', 'man', 'minority', 'race/nationality', 'age', 'region', 'religion', 'extra', 'curse']
+        li = []
+        client = MongoClient(host=host, port=port) # 추후 서버 띄우면 아이피 및 포트 변경
+        db = client["community_database"]
+        collection = db[C]
+
+        # DB에서 모든 document 꺼내오기
+        post_list = list(collection.find({}))
+        for asdf, item in enumerate(post_list):
+            print(asdf)
+            pid = item['_id']
+            
+            if len(item['comments']) == 0:
+                continue
+
+            total = len(item['comments'])
+            num = 0
+            
+            for item2 in item['comments']:
+                if item2['message'] == "[삭제된 댓글입니다.]": # 삭제된 것은 넘어가기
+                    continue
+                
+                if item2['result'] in hate:
+                    num += 1
+
+            li.append(num/total)
+        
+        return li
+
+    except Exception as e:
+        print(traceback.format_exc())
+    finally:
+        client.close()
+        print('DB connection closed')
+
 def refresh_db(host, port, C):
-    start = time.time()
     ''' DB 데이터 유효성 확인 후 포맷에 맞게 변경하는 함수이다.
     Args:
         host: 서버 호스트
@@ -16,10 +52,11 @@ def refresh_db(host, port, C):
     Returns:
         None        
     '''
+    start = time.time()
+    hate = ['woman/family', 'man', 'minority', 'race/nationality', 'age', 'region', 'religion', 'extra', 'curse']
     # 모델 로드
     try:
         base_dir = os.getcwd()
-        #load kcbert model & tokenizer - 서버에서 먼저 실행해야 현재 작업 디렉터리 올바르게 됨, 서버 먼저 실행안하면 오류 발생!
         model_path = base_dir + '/model/kcbert-model.pth'
         model = torch.load(model_path, map_location=torch.device('cpu'))
         model.eval()
@@ -39,9 +76,6 @@ def refresh_db(host, port, C):
         post_list = list(collection.find({}))
         for asdf, item in enumerate(post_list):
             pid = item['_id']
-            hate_flag = False     # 혐오 표현이라면 True
-            abuse_flag = False    # 욕설 표현이라면 True
-            clean_flag = False    # 클린 표현이라면 True
             
             # 태그가 달려있다면 수정할 필요 없음!
             if "tags" in item:
@@ -53,38 +87,35 @@ def refresh_db(host, port, C):
                 content_info = app_kcbert.testModel(model, item['content'])
                 content_result = content_info["maxClass"]
                 if content_result == 'clean':
-                    clean_flag = True
-                elif content_result == 'curse':
-                    abuse_flag = True
+                    item['tags'] = 0
                 else:
-                    hate_flag = True 
+                    item['tags'] = 1
             
-            # 댓글들 있다면 분류 결과 및 신뢰도 등록!
-            for item2 in item['comments']:
-                if item2['message'] == "[삭제된 댓글입니다.]": # 삭제된 것은 넘어가기
-                    continue
-                
-                # result, precision 채워 넣기
-                if "result" not in item2:
-                    S = item2['message']
-                    res = app_kcbert.testModel(model, S)
-                    result = res["maxClass"]
-                    precision = res["reliability"]
-
-                    if result == 'clean':
-                        clean_flag = True
-                    elif result == 'curse':
-                        abuse_flag = True
-                    else:
-                        hate_flag = True
-
-                    item2['result'] = result
-                    item2['precision'] = precision
-
-            if hate_flag or abuse_flag:
-                item['tags'] = 1
             else:
-                item['tags'] = 0
+                total = len(item['comments'])
+                num = 0
+                # 댓글들 있다면 분류 결과 및 신뢰도 등록! 분류 결과는 해당 게시글에서 혐오+악플이 20%넘어가면 분쟁글!
+                for item2 in item['comments']:
+                    if item2['message'] == "[삭제된 댓글입니다.]": # 삭제된 것은 넘어가기
+                        continue
+                    
+                    # result, precision 채워 넣기
+                    if "result" not in item2:
+                        S = item2['message']
+                        res = app_kcbert.testModel(model, S)
+                        result = res["maxClass"]
+                        precision = res["reliability"]
+
+                        if result in hate:
+                            num += 1
+
+                        item2['result'] = result
+                        item2['precision'] = precision
+
+                if num/total >= 0.2:
+                    item['tags'] = 1
+                else:
+                    item['tags'] = 0
             
             # DB에 반영
             collection.replace_one({'_id':pid}, item)
@@ -103,3 +134,7 @@ if __name__=="__main__":
     community_list = ["fmkorea"]
     for item in community_list:
         refresh_db('localhost', 27017, item)
+
+    # res = get_stat('localhost', 27017, 'fmkorea', 15)
+    # print(res)
+    # print(sum(res)/len(res))
