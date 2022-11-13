@@ -54,17 +54,20 @@
 
 ## 모델 학습 환경 및 지표
 
-**-서버 환경**: linux
+**-서버 환경**: Linux
 
-**-가상환경**: anaconda 4.14.0(python 3.8.13)
+**-가상환경**: Anaconda 4.14.0(python 3.8.13)
 
 **-데이터셋**
 
-기존 unsmile dataset을 cleaning(약 120개 데이터 re-labeling)한 데이터셋
+Smilegate사에서 제공한 unsmile dataset을 cleaning한 데이터셋.
+데이터셋을 분석하던 중 일부 데이터 레이블링이 잘못되어 있음을 확인했다. 모든 데이터셋을 수기로 확인하기엔 무리가 있어 모델 기반 방식으로 약 120개(전체 데이터 중 약 1%) 데이터의 레이블을 고치는 작업을 진행했다.
 
 **-모델**
 
-1. KoBERT: 한국어 위키, 뉴스 기사, 책 등 잘 정제된 데이터를 사용하여 사전학습한 모델
+BERT는 대량의 영어 말뭉치 데이터를 사용하여 multi-layer transformer encoder 모델을 MLM(Masked Language Modeling)과 NSP(Next Sentence Prediction) training objective로 학습한 모델이다. transformer encoder 내부의 self-attention layer는 BERT 모델이 입력 문장의 문맥을 고려한 좋은 representation을 만들도록 해준다. 본 프로젝트에서는 한국어 감정분석 문제를 풀기위한 sentence encoder로써 KoBERT와 KcBERT를 사용한다.   
+
+1. KoBERT: 한국어 위키, 뉴스 기사, 책 등 잘 정제된 데이터를 사용하여 BERT를 추가학습한 모델
 2. KcBERT: 네이버 뉴스의 댓글과 대댓글을 수집해 토크나이저와 BERT모델을 처음부터 사전학습한 모델
 
 모델 스펙
@@ -77,7 +80,7 @@
 
 **-학습**
 
-KoBERT, KcBERT 모두 15 epoch으로 학습
+KoBERT, KcBERT 모델 내의 파라미터는 변경하지 않고 최종적인 부류를 위한 가장 마지막 신경망 층의 파라미터만 학습하는 방식으로 학습했다.
 
 epoch별 loss 변화 추이 그래프
 
